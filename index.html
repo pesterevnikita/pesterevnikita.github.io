@@ -18,7 +18,7 @@
  <div id="slideshow"></div>
  <script>
   function updateSlideshow() {
-   fetch("https://api.github.com/repos/pesterevnikita/pesterevnikita.github.io/contents/images")
+   fetch("https://api.github.com/repos/pesterevnikita/pesterevnikita.github.io/contents/images?cachebust=" + Date.now())
     .then(response => {
      return response.json();
     })
