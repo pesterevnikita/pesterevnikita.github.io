@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
- <title>Happy Birthday!</title>
+ <title>Slideshow</title>
  <style>
   body {
    background-color: black;
@@ -16,32 +16,41 @@
 </head>
 <body>
  <div id="slideshow"></div>
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
  <script>
-  $(document).ready(function() {
-   // Get the list of image URLs from the GitHub API
-   $.getJSON("https://api.github.com/repos/pesterevnikita/pesterevnikita.github.io/contents/images", function(data) {
-    var imageUrls = [];
-    for (var i = 0; i < data.length; i++) {
-     var url = data[i].download_url;
-     if (url.endsWith(".jpg") || url.endsWith(".jpeg") || url.endsWith(".png")) {
-      imageUrls.push(url);
+  function updateSlideshow() {
+   fetch("https://api.github.com/repos/pesterevnikita/pesterevnikita.github.io/contents/images")
+    .then(response => {
+     return response.json();
+    })
+    .then(data => {
+     var imageUrls = data
+      .filter(item => item.type === "file")
+      .filter(item => /\.(jpe?g|png)$/.test(item.name))
+      .map(item => item.download_url);
+
+     if (imageUrls.length > 0) {
+      var currentImageIndex = 0;
+      var img = document.createElement("img");
+      img.src = imageUrls[currentImageIndex];
+      document.getElementById("slideshow").innerHTML = "";
+      document.getElementById("slideshow").appendChild(img);
+
+      setInterval(function () {
+       currentImageIndex = (currentImageIndex + 1) % imageUrls.length;
+       img.src = imageUrls[currentImageIndex];
+      }, 5000);
      }
-    }
 
-    // Display the first image in the slideshow
-    var currentImageIndex = 0;
-    var img = document.createElement("img");
-    img.src = imageUrls[currentImageIndex];
-    document.getElementById("slideshow").appendChild(img);
+     setTimeout(updateSlideshow, 60000);
+    })
+    .catch(error => {
+     console.error(error);
 
-    // Advance to the next image every 5 seconds
-    setInterval(function() {
-     currentImageIndex = (currentImageIndex + 1) % imageUrls.length;
-     img.src = imageUrls[currentImageIndex];
-    }, 5000);
-   });
-  });
+     setTimeout(updateSlideshow, 10000);
+    });
+  }
+
+  window.addEventListener("load", updateSlideshow);
  </script>
 </body>
 </html>
