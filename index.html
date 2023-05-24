@@ -1,7 +1,47 @@
 <!DOCTYPE html>
 <html>
+<head>
+ <title>Happy Birthday!</title>
+ <style>
+  body {
+   background-color: black;
+  }
+  img {
+   max-width: 100%;
+   max-height: 100%;
+   margin: auto;
+   display: block;
+  }
+ </style>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+ <div id="slideshow"></div>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ <script>
+  $(document).ready(function() {
+   // Get the list of image URLs from the GitHub API
+   $.getJSON("https://api.github.com/repos/pesterevnikita/pesterevnikita.github.io/contents/images", function(data) {
+    var imageUrls = [];
+    for (var i = 0; i < data.length; i++) {
+     var url = data[i].download_url;
+     if (url.endsWith(".jpg") || url.endsWith(".jpeg") || url.endsWith(".png")) {
+      imageUrls.push(url);
+     }
+    }
+
+    // Display the first image in the slideshow
+    var currentImageIndex = 0;
+    var img = document.createElement("img");
+    img.src = imageUrls[currentImageIndex];
+    document.getElementById("slideshow").appendChild(img);
+
+    // Advance to the next image every 5 seconds
+    setInterval(function() {
+     currentImageIndex = (currentImageIndex + 1) % imageUrls.length;
+     img.src = imageUrls[currentImageIndex];
+    }, 5000);
+   });
+  });
+ </script>
 </body>
 </html>
