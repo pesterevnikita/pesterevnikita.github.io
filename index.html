@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Monopoly Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 100px);
+            grid-template-rows: repeat(5, 100px);
+            gap: 1px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            border: 1px solid black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: lightgrey;
+        }
+        .player {
+            background-color: yellow;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+        }
+        #info {
+            margin-top: 20px;
+        }
+        #dice-roll {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mini Monopoly Game</h1>
+    <div id="game-board"></div>
+    <div id="info">
+        <p>Player 1 Money: <span id="player1-money">1500</span></p>
+        <p>Player 2 Money: <span id="player2-money">1500</span></p>
+    </div>
+    <button id="dice-roll">Roll Dice</button>
+    <script>
+        const boardSize = 5;
+        const initialMoney = 1500;
+        const player1 = { position: 0, money: initialMoney };
+        const player2 = { position: 0, money: initialMoney };
+        let currentPlayer = player1;
+
+        const board = Array.from({ length: boardSize * boardSize }, (_, index) => ({
+            index,
+            owner: null,
+            price: Math.floor(Math.random() * 400) + 100,
+        }));
+
+        const gameBoard = document.getElementById('game-board');
+        board.forEach(cell => {
+            const cellElement = document.createElement('div');
+            cellElement.className = 'cell';
+            cellElement.textContent = `$${cell.price}`;
+            cellElement.id = `cell-${cell.index}`;
+            gameBoard.appendChild(cellElement);
+        });
+
+        const updateBoard = () => {
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.innerHTML = '';
+                const cellIndex = parseInt(cell.id.split('-')[1]);
+                const boardCell = board[cellIndex];
+                cell.textContent = `$${boardCell.price}`;
+                if (boardCell.owner) {
+                    cell.style.backgroundColor = boardCell.owner === player1 ? 'blue' : 'red';
+                }
+            });
+
+            const player1Cell = document.getElementById(`cell-${player1.position}`);
+            const player2Cell = document.getElementById(`cell-${player2.position}`);
+            if (player1Cell) {
+                const player1Token = document.createElement('div');
+                player1Token.className = 'player';
+                player1Cell.appendChild(player1Token);
+            }
+            if (player2Cell) {
+                const player2Token = document.createElement('div');
+                player2Token.className = 'player';
+                player2Token.style.backgroundColor = 'green';
+                player2Cell.appendChild(player2Token);
+            }
+        };
+
+        const rollDice = () => Math.floor(Math.random() * 6) + 1;
+
+        const movePlayer = (player, steps) => {
+            player.position = (player.position + steps) % (boardSize * boardSize);
+        };
+
+        const handlePurchase = (player, cell) => {
+            if (!cell.owner && player.money >= cell.price) {
+                player.money -= cell.price;
+                cell.owner = player;
+            }
+        };
+
+        const updateInfo = () => {
+            document.getElementById('player1-money').textContent = player1.money;
+            document.getElementById('player2-money').textContent = player2.money;
+        };
+
+        document.getElementById('dice-roll').addEventListener('click', () => {
+            const dice = rollDice();
+            movePlayer(currentPlayer, dice);
+            const currentCell = board[currentPlayer.position];
+            handlePurchase(currentPlayer, currentCell);
+            updateBoard();
+            updateInfo();
+            currentPlayer = currentPlayer === player1 ? player2 : player1;
+        });
+
+        updateBoard();
+    </script>
+</body>
+</html>
