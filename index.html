@@ -1,130 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Monopoly Game</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-family: Arial, sans-serif;
-        }
-        #game-board {
-            display: grid;
-            grid-template-columns: repeat(5, 100px);
-            grid-template-rows: repeat(5, 100px);
-            gap: 1px;
-        }
-        .cell {
-            width: 100px;
-            height: 100px;
-            border: 1px solid black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: lightgrey;
-        }
-        .player {
-            background-color: yellow;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-        }
-        #info {
-            margin-top: 20px;
-        }
-        #dice-roll {
-            margin-top: 10px;
-        }
-    </style>
+   <title>Life Counter</title>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<style>
+   .dick {
+      background-color: #0093E9;
+      background-image: linear-gradient(160deg, #0093E9 0%, #80D0C7 100%);
+   }
+
+   .counter {
+      font-size: xx-large;
+   }
+</style>
 </head>
-<body>
-    <h1>Mini Monopoly Game</h1>
-    <div id="game-board"></div>
-    <div id="info">
-        <p>Player 1 Money: <span id="player1-money">1500</span></p>
-        <p>Player 2 Money: <span id="player2-money">1500</span></p>
-    </div>
-    <button id="dice-roll">Roll Dice</button>
-    <script>
-        const boardSize = 5;
-        const initialMoney = 1500;
-        const player1 = { position: 0, money: initialMoney };
-        const player2 = { position: 0, money: initialMoney };
-        let currentPlayer = player1;
 
-        const board = Array.from({ length: boardSize * boardSize }, (_, index) => ({
-            index,
-            owner: null,
-            price: Math.floor(Math.random() * 400) + 100,
-        }));
+<body  class="h-100">
+   <div class="container vh-100 dick ">
+         <div class="row h-50 player text-center align-items-center" id="player2">
+            <div class="col"><button class="btn btn-danger btn-sm" onclick="decrementCounter(1)">-</button></div>
+            <div class="col counter" id="counter1">0</div>
+            <div class="col"><button class="btn btn-success btn-sm" onclick="incrementCounter(1)">+</button></div>
+         </div>
+         <div class="row h-50 player text-center align-items-center" id="player2">
+            <div class="col"><button class="btn btn-danger btn-sm" onclick="decrementCounter(2)">-</button></div>
+            <div class="col counter" id="counter2">0</div>
+            <div class="col"><button class="btn btn-success btn-sm" onclick="incrementCounter(2)">+</button></div>
+         </div>
+   </div>
 
-        const gameBoard = document.getElementById('game-board');
-        board.forEach(cell => {
-            const cellElement = document.createElement('div');
-            cellElement.className = 'cell';
-            cellElement.textContent = `$${cell.price}`;
-            cellElement.id = `cell-${cell.index}`;
-            gameBoard.appendChild(cellElement);
-        });
+   <script>
+      function incrementCounter(player) {
+         let counter = document.getElementById('counter' + player);
+         counter.innerText = parseInt(counter.innerText) + 1;
+      }
 
-        const updateBoard = () => {
-            document.querySelectorAll('.cell').forEach(cell => {
-                cell.innerHTML = '';
-                const cellIndex = parseInt(cell.id.split('-')[1]);
-                const boardCell = board[cellIndex];
-                cell.textContent = `$${boardCell.price}`;
-                if (boardCell.owner) {
-                    cell.style.backgroundColor = boardCell.owner === player1 ? 'blue' : 'red';
-                }
-            });
+      function decrementCounter(player) {
+         let counter = document.getElementById('counter' + player);
+         counter.innerText = parseInt(counter.innerText) - 1;
+      }
 
-            const player1Cell = document.getElementById(`cell-${player1.position}`);
-            const player2Cell = document.getElementById(`cell-${player2.position}`);
-            if (player1Cell) {
-                const player1Token = document.createElement('div');
-                player1Token.className = 'player';
-                player1Cell.appendChild(player1Token);
-            }
-            if (player2Cell) {
-                const player2Token = document.createElement('div');
-                player2Token.className = 'player';
-                player2Token.style.backgroundColor = 'green';
-                player2Cell.appendChild(player2Token);
-            }
-        };
-
-        const rollDice = () => Math.floor(Math.random() * 6) + 1;
-
-        const movePlayer = (player, steps) => {
-            player.position = (player.position + steps) % (boardSize * boardSize);
-        };
-
-        const handlePurchase = (player, cell) => {
-            if (!cell.owner && player.money >= cell.price) {
-                player.money -= cell.price;
-                cell.owner = player;
-            }
-        };
-
-        const updateInfo = () => {
-            document.getElementById('player1-money').textContent = player1.money;
-            document.getElementById('player2-money').textContent = player2.money;
-        };
-
-        document.getElementById('dice-roll').addEventListener('click', () => {
-            const dice = rollDice();
-            movePlayer(currentPlayer, dice);
-            const currentCell = board[currentPlayer.position];
-            handlePurchase(currentPlayer, currentCell);
-            updateBoard();
-            updateInfo();
-            currentPlayer = currentPlayer === player1 ? player2 : player1;
-        });
-
-        updateBoard();
-    </script>
+      function resetCounter(player) {
+         let counter = document.getElementById('counter' + player);
+         counter.innerText = 0;
+      }
+   </script>
 </body>
+
 </html>
