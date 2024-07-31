@@ -41,6 +41,12 @@
       function changeCounter(player, count) {
          let counter = document.getElementById('counter' + player);
          counter.innerText = parseInt(counter.innerText) + count;
+         
+          if (navigator.vibrate) {
+            navigator.vibrate(200); // Vibrate for 200 milliseconds
+         } else {
+            alert('Vibration API is not supported by your browser.');
+         }
       }
 
       function resetCounter(player) {
