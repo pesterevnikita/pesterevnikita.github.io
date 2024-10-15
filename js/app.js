@@ -3,94 +3,147 @@
 //import { Application } from 'pixi.js';
 
 (async () => {
-    // Create a new Pixi Application instance
-    const app = new PIXI.Application();
+   // Create a new Pixi Application instance
+   const app = new PIXI.Application();
 
-    // Initialize the application asynchronously with the required options
-    await app.init({
+   // Initialize the application asynchronously with the required options
+   await app.init({
       // Application options for smaller windows on mobile
-      width: window.innerWidth < 800 ? 360 : 800,
-      height: window.innerHeight < 600 ? 640 : 600,
+      width: window.innerWidth < 1600 ? 600 : 1600,
+      height: window.innerHeight < 600 ? 640 : 1200,
       backgroundColor: 0x1099bb,
       resolution: window.devicePixelRatio || 1,
       view: document.createElement('canvas')
-  });
+   });
 
-// Add the canvas that Pixi automatically created for you to the HTML document
-document.body.appendChild(app.canvas);
-  // load the PNG asynchronously
-  /////////////////////////////////
-  // Create background with a gradient
-//     const background = new PIXI.Graphics();
-const gradientTexture = createGradientTexture();
-const gradientSprite = new PIXI.Sprite(gradientTexture);
-app.stage.addChild(gradientSprite);
+   // Add the canvas that Pixi automatically created for you to the HTML document
+   document.body.appendChild(app.canvas);
 
-// Function to create gradient texture
-function createGradientTexture() {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  canvas.width = 640;
-  canvas.height = 360;
+   /////////////////////////////////
+   // Create background with a gradient
+   //     const background = new PIXI.Graphics();
+   const gradientTexture = createGradientTexture();
+   const gradientSprite = new PIXI.Sprite(gradientTexture);
+   app.stage.addChild(gradientSprite);
 
-  const gradient = ctx.createLinearGradient(0, 0, 640, 360);
-  gradient.addColorStop(0, "#ff9a9e");
-  gradient.addColorStop(1, "#fad0c4");
+   // Function to create gradient texture
+   function createGradientTexture() {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = 640;
+      canvas.height = 800;
 
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const gradient = ctx.createLinearGradient(0, 0, 640, 360);
+      gradient.addColorStop(0, "#ff8c8c");
+      gradient.addColorStop(1, "#fad0c4");
 
-  return PIXI.Texture.from(canvas);
-}
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
- // Create first rectangle with border and text
-const rect1 = new PIXI.Graphics();
-const text1 = new PIXI.Text("text1", { fill: 0xffffff, fontSize: 24 });
-rect1.lineStyle(2, 0xffffff); // White border
-rect1.beginFill(0xff0000); // Red fill
-rect1.drawRect(0, 0, 200, 100); // x, y, width, height
-rect1.endFill();
-rect1.x = 20;
-rect1.y = 20;
-text1.x = 50;
-text1.y = 80;
+      return PIXI.Texture.from(canvas);
+   }
+   const rectangles = []; // Array to store all rectangles
 
+   let x = 10; // Starting x-coordinate
+   let y = 10; // Starting y-coordinate
+   const size = 40; // Width and height of each rectangle
+   const spacing = 50; // Spacing between rectangles
 
-// Create second rectangle below the first one
-const rect2 = new PIXI.Graphics();
-rect2.beginFill(0x0000ff); // Blue color
-rect2.drawRect(0, 0, 200, 100); // x, y, width, height
-rect2.endFill();
-rect2.x = 200;
-rect2.y = 200;
+   // 1. First 11 rectangles: x stays the same, y increases
+   for (let i = 0; i < 11; i++) {
+      const rect = new PIXI.Graphics();
+      rect.lineStyle(2, 0xffffff);
+      rect.beginFill(0xff0000);
+      rect.rect(0, 0, size, size); // x stays the same, y increases
+      rect.endFill();
+      rect.position.set(x, y + i * spacing)
+      rectangles.push(rect);
+      app.stage.addChild(rect);
+   }
 
+   // 2. Next 10 rectangles: y stays the same, x increases
+   for (let i = 1; i <= 10; i++) {
+      const rect = new PIXI.Graphics();
+      rect.lineStyle(2, 0xffffff);
+      rect.beginFill(0xff0000);
+      rect.rect(0, 0, size, size); // y is fixed, x increases
+      rect.endFill();
+      rect.position.set(x + i * spacing, y + 10 * spacing)
+      rectangles.push(rect);
+      app.stage.addChild(rect);
+   }
 
-// Create a third rectangle acting as a button
-const button = new PIXI.Graphics();
-button.lineStyle(2, 0xffffff); // White border
-button.beginFill(0x00ff00); // Green fill
-button.drawRect(0, 0, 200, 50); // x, y, width, height
-button.endFill();
-button.x = 20;
-button.y = 320;
-button.interactive = true;
-button.buttonMode = true; // Makes it look like a clickable button
+   // 3. Next 10 rectangles: x stays the same, y decreases
+   for (let i = 1; i <= 10; i++) {
+      const rect = new PIXI.Graphics();
+      rect.lineStyle(2, 0xffffff);
+      rect.beginFill(0xff0000);
+      rect.rect(0, 0, size, size); // x is fixed, y decreases
+      rect.endFill();
+      rect.position.set(x + 10 * spacing, y + (10 - i) * spacing)
+      rectangles.push(rect);
+      app.stage.addChild(rect);
+   }
 
-const buttonText = new PIXI.Text("Toggle Text", { fill: 0xffffff, fontSize: 18 });
-buttonText.x = 60;
-buttonText.y = 335;
+   // 4. Last 9 rectangles: y stays the same, x decreases
+   for (let i = 1; i <= 9; i++) {
+      const rect = new PIXI.Graphics();
+      rect.lineStyle(2, 0xffffff);
+      rect.beginFill(0xff0000);
+      rect.drawRect(0, 0, size, size); // y is fixed, x decreases
+      rect.endFill();
+      rect.position.set(x + (10 - i) * spacing, y)
+      rectangles.push(rect);
+      app.stage.addChild(rect);
+   }
 
-// Toggle text on rect1 when the button is clicked
-let isText1 = true;
-button.on("pointerdown", () => {
-  text1.text = isText1 ? "text3" : "text1";
-  isText1 = !isText1;
-});
+   let player1Position = 0; // Player 1 starts on the first rectangle
+   let player2Position = 0; // Player 2 also starts on the first rectangle
 
-// Add everything to the stage
-app.stage.addChild(rect1);
-app.stage.addChild(text1);
-app.stage.addChild(rect2);
-app.stage.addChild(button);
-app.stage.addChild(buttonText);
+   // Create player markers using PIXI.Text
+   const player1 = new PIXI.Text('1', { fontSize: 24, fill: 0xffffff }); // Player 1 marker (Emoji)
+   const player2 = new PIXI.Text('  2', { fontSize: 24, fill: 0xffffff }); // Player 2 marker (Letter)
+
+   app.stage.addChild(player1);
+   app.stage.addChild(player2);
+
+   // Function to update player marker positions based on rectangle coordinates
+   function updatePlayerPositions() {
+      // Update Player 1's position
+      player1.x = rectangles[player1Position].x + 10; // Adjust for centering
+      player1.y = rectangles[player1Position].y + 10;
+     
+      // Update Player 2's position
+      player2.x = rectangles[player2Position].x + 10;
+      player2.y = rectangles[player2Position].y + 10;
+   }
+
+   // Initialize player positions
+   updatePlayerPositions();
+
+   // Create a button rectangle for moving Player 1
+   const button = new PIXI.Graphics();
+   button.lineStyle(2, 0xffffff); // White border
+   button.beginFill(0x0000ff); // Blue fill to distinguish it as a button
+   button.drawRect(200, 600, 100, 50); // x, y, width, height of the button
+   button.endFill();
+
+   // Add text label to the button
+   const buttonText = new PIXI.Text('Move Player 1', { fontSize: 16, fill: 0xffffff });
+   buttonText.x = 210; // Center the text in the button
+   buttonText.y = 620; // Adjust to place it inside the button
+
+   // Make the button interactive and clickable
+   button.interactive = true;
+   button.buttonMode = true;
+
+   // Add the button and text to the stage
+   app.stage.addChild(button);
+   app.stage.addChild(buttonText);
+
+   // Event listener to move Player 1 when the button is clicked
+   button.on('pointerdown', (event) => {
+      player1Position = (player1Position + 1) % rectangles.length; // Move Player 1 to the next rectangle
+      updatePlayerPositions(); // Update the player positions after moving
+   });
 })();
