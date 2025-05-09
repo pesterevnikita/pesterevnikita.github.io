@@ -22,6 +22,7 @@ body, html {
   color: white;
   transition: background-color 0.3s ease;
   user-select: none;
+  text-align: center;
 }
 
 #player1.active,
@@ -45,3 +46,22 @@ body, html {
 .time {
   pointer-events: none;
 }
+
+#player1 .time {
+   transform: rotate(180deg);
+ }
+
+ #player1.critical,
+#player2.critical {
+  background-color: #d9534f; /* calm red */
+}
+
+.icon-button {
+   background: none;
+   border: none;
+   font-size: 1.5rem;
+   margin: 0 10px;
+   cursor: pointer;
+   color: #333;
+ }
+ 

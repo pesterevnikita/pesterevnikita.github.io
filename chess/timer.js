@@ -54,10 +54,25 @@ function switchTurn() {
 }
 
 function updateStyles() {
-  document.getElementById("player1").className = activePlayer === 1 ? 'player active' : 'player inactive';
-  document.getElementById("player2").className = activePlayer === 2 ? 'player active' : 'player inactive';
-}
+   const p1 = document.getElementById("player1");
+   const p2 = document.getElementById("player2");
+ 
+   p1.className = 'player ' + (activePlayer === 1 ? (time1 <= 60 ? 'critical' : 'active') : 'inactive');
+   p2.className = 'player ' + (activePlayer === 2 ? (time2 <= 60 ? 'critical' : 'active') : 'inactive');
+ }
+ 
 
 updateDisplay();
 document.getElementById("player1").classList.add("inactive");
 document.getElementById("player2").classList.add("inactive");
+
+function resetTimer() {
+   clearInterval(interval);
+   time1 = START_TIME;
+   time2 = START_TIME;
+   activePlayer = null;
+   updateDisplay();
+   document.getElementById("player1").className = 'player inactive';
+   document.getElementById("player2").className = 'player inactive';
+ }
+ 
