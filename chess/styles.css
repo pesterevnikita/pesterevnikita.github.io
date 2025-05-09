@@ -1,0 +1,47 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100%;
+  background-color: #f0f0f0;
+}
+
+#timer-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+.player {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10vw;
+  color: white;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+#player1.active,
+#player2.active {
+  background-color: #4CAF50;
+}
+
+#player1.inactive,
+#player2.inactive {
+  background-color: #888;
+}
+
+#middle-bar {
+  height: 50px;
+  background-color: #ccc;
+  text-align: center;
+  line-height: 50px;
+  font-size: 1rem;
+}
+
+.time {
+  pointer-events: none;
+}
